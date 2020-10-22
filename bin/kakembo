@@ -1,0 +1,97 @@
+#! /bin/bash
+
+kakembo=$0
+
+
+### Variables ####
+OUTWD=
+INDIR=
+CPUS=4
+REFERENCE=
+VERSION="1.0"
+kakembo=$0
+ARGPARSED0=$0
+ALLARGSPARSED=$@
+
+
+usage() {
+    cat <<EOF
+Thanks for using eTrack $VERSION
+Developed by as a mini-project by Group-4 EanBIT Residential Training 2
+
+SYPNOSIS:
+    An E.coli analysis Pipeline for Profiling it's epidemiology, virulence, phylogeny & resistome
+
+USAGE:
+    eTrack [options] --input <INPUT> --output <OUTPUT> --reference <REF.fasta>
+
+GENERAL:
+    -h/--help       Display this help and exit
+    -c/--citation   Show citation and exit
+    -v/--version    Print version and exit
+
+MANDATORY OPTIONS:
+    -i/--input      Path to the raw sequencces to be analyzed
+    -o/--output     Name of ouput directory
+    -r/--reference  Path to the reference genome(.fasta, .gb) [default="REF.fasta"]
+
+OTHER OPTIONS:
+    -t/--threads    Number of cores to use <integer> [default=$CPUS]
+EOF
+}
+
+
+#########  OPTIONS  ############
+POSITIONAL=()
+while [[ $# -gt 0 ]]; do
+    ARGS="$1"
+    case $ARGS in
+    -i | --input)
+        if [ "$2" ]; then
+            INDIR=$2
+            shift 2
+        fi
+        ;;
+    -o | --output)
+        if [ "$2" ]; then
+            OUTWD=$2
+            shift 2
+        fi
+        ;;
+    -r | --reference)
+        if [ "$2" ]; then
+            REFERENCE=$2
+            shift 2
+        fi
+        ;;
+    -t | --threads)
+        if [ "$2" -eq "$2" ] 2>/dev/null; then
+            CPUS=$2
+            shift 2
+        else
+            echo -e 'ERROR: "-t/--threads" requires a numeric argument\n'
+            echo -e "Selected cores: $2\n"
+            exit 1
+        fi
+        ;;
+    -h | --help)
+        usage
+        exit 1
+        ;;
+    -v | --version)
+        echo "This is eTrack version $VERSION"
+        exit 1
+        ;;
+    -c | --citation)
+        echo -e "If using eTrack, please cite:"
+        echo -e "https://github.com/GunzIvan28/eTrack"
+        exit 1
+        ;;
+    *)
+        echo -e "\nERROR: unknown option: $1 \n"
+        usage
+        exit 1
+        ;;
+    esac
+done
+
